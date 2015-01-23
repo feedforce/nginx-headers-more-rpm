@@ -185,7 +185,6 @@ fi
 
 %changelog
 * Thu Oct  9 2014 Takashi Masuda <masutaka@feedforce.jp>
-- 1.7.6 for ff2
 - Change nginx.conf to 1.7.6 default
 
 * Wed Oct  8 2014 Kenta ONISHI <onishi@feedforce.jp>
