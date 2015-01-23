@@ -5,8 +5,8 @@
 
 Summary: nginx is a high performance web server
 Name: nginx
-Version: 1.7.6
-Release: ff2%{?dist}
+Version: 1.7.9
+Release: ff1%{?dist}
 Packager: feedforce Inc. <socialplus_admin@feedforce.jp>
 Vendor: nginx inc.
 URL: http://nginx.org/
@@ -184,6 +184,9 @@ if [ $1 -ge 1 ]; then
 fi
 
 %changelog
+* Fri Jan 23 2015 Takashi Masuda <masutaka@feedforce.jp>
+- 1.7.9 for ff
+
 * Thu Oct  9 2014 Takashi Masuda <masutaka@feedforce.jp>
 - Change nginx.conf to 1.7.6 default
 
