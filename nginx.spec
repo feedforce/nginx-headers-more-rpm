@@ -1,23 +1,22 @@
 #
 %define nginx_home %{_localstatedir}/cache/nginx
-%define nginx_user nginx
-%define nginx_group nginx
+%define nginx_user nobody
+%define nginx_group nobody
 
 Summary: nginx is a high performance web server
 Name: nginx
-Version: 1.2.8
-Release: 1%{?dist}.ngx
+Version: 1.7.6
+Release: ff2%{?dist}
+Packager: feedforce Inc. <socialplus_admin@feedforce.jp>
 Vendor: nginx inc.
 URL: http://nginx.org/
 
 Source0: http://nginx.org/download/%{name}-%{version}.tar.gz
-Source1: logrotate
+Source1: headers-more-nginx-module-0.25.tar.gz
 Source2: nginx.init
 Source3: nginx.sysconf
 Source4: nginx.conf
-Source5: nginx.vh.default.conf
-Source6: nginx.vh.example_ssl.conf
-Source7: nginx.suse.init
+# Source2: logrotate
 
 License: 2-clause BSD-like license
 %if 0%{?suse_version}
@@ -45,15 +44,9 @@ Provides: webserver
 nginx [engine x] is an HTTP and reverse proxy server, as well as
 a mail proxy server
 
-%package debug
-Summary: debug version of nginx
-Group: System Environment/Daemons
-Requires: nginx
-%description debug
-not stripped version of nginx build with the debugging log support
-
 %prep
 %setup -q
+%setup -b 1 -q
 
 %build
 ./configure \
@@ -73,81 +66,50 @@ not stripped version of nginx build with the debugging log support
         --group=%{nginx_group} \
         --with-http_ssl_module \
         --with-http_realip_module \
-        --with-http_addition_module \
-        --with-http_sub_module \
-        --with-http_dav_module \
-        --with-http_flv_module \
-        --with-http_mp4_module \
         --with-http_gzip_static_module \
-        --with-http_random_index_module \
-        --with-http_secure_link_module \
         --with-http_stub_status_module \
-        --with-mail \
-        --with-mail_ssl_module \
         --with-file-aio \
-        --with-ipv6 \
-        --with-debug \
+        --with-pcre \
+        --without-http_autoindex_module \
+        --without-http_empty_gif_module \
+        --without-http_geo_module \
+        --without-http_scgi_module \
+        --without-http_ssi_module \
+        --without-http_split_clients_module \
+        --without-http_upstream_ip_hash_module \
+        --without-http_userid_module \
+        --without-http_uwsgi_module \
+        --without-mail_imap_module \
+        --without-mail_pop3_module \
+        --without-mail_smtp_module \
+        --add-module=../headers-more-nginx-module-0.25 \
         --with-cc-opt="%{optflags} $(pcre-config --cflags)" \
         $*
 make %{?_smp_mflags}
-%{__mv} %{_builddir}/%{name}-%{version}/objs/nginx \
-        %{_builddir}/%{name}-%{version}/objs/nginx.debug
-./configure \
-        --prefix=%{_sysconfdir}/nginx \
-        --sbin-path=%{_sbindir}/nginx \
-        --conf-path=%{_sysconfdir}/nginx/nginx.conf \
-        --error-log-path=%{_localstatedir}/log/nginx/error.log \
-        --http-log-path=%{_localstatedir}/log/nginx/access.log \
-        --pid-path=%{_localstatedir}/run/nginx.pid \
-        --lock-path=%{_localstatedir}/run/nginx.lock \
-        --http-client-body-temp-path=%{_localstatedir}/cache/nginx/client_temp \
-        --http-proxy-temp-path=%{_localstatedir}/cache/nginx/proxy_temp \
-        --http-fastcgi-temp-path=%{_localstatedir}/cache/nginx/fastcgi_temp \
-        --http-uwsgi-temp-path=%{_localstatedir}/cache/nginx/uwsgi_temp \
-        --http-scgi-temp-path=%{_localstatedir}/cache/nginx/scgi_temp \
-        --user=%{nginx_user} \
-        --group=%{nginx_group} \
-        --with-http_ssl_module \
-        --with-http_realip_module \
-        --with-http_addition_module \
-        --with-http_sub_module \
-        --with-http_dav_module \
-        --with-http_flv_module \
-        --with-http_mp4_module \
-        --with-http_gzip_static_module \
-        --with-http_random_index_module \
-        --with-http_secure_link_module \
-        --with-http_stub_status_module \
-        --with-mail \
-        --with-mail_ssl_module \
-        --with-file-aio \
-        --with-ipv6 \
-        --with-cc-opt="%{optflags} $(pcre-config --cflags)" \
-        $*
-make %{?_smp_mflags}
+
 
 %install
 %{__rm} -rf $RPM_BUILD_ROOT
 %{__make} DESTDIR=$RPM_BUILD_ROOT install
+strip $RPM_BUILD_ROOT%{_sbindir}/nginx
 
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/nginx
-%{__mv} $RPM_BUILD_ROOT%{_sysconfdir}/nginx/html $RPM_BUILD_ROOT%{_datadir}/nginx/
 
 %{__rm} -f $RPM_BUILD_ROOT%{_sysconfdir}/nginx/*.default
 %{__rm} -f $RPM_BUILD_ROOT%{_sysconfdir}/nginx/fastcgi.conf
+%{__rm} -rf $RPM_BUILD_ROOT%{_sysconfdir}/nginx/html
+%{__rm} -rf $RPM_BUILD_ROOT%{_sysconfdir}/nginx/scgi_params
+%{__rm} -rf $RPM_BUILD_ROOT%{_sysconfdir}/nginx/uwsgi_params
+%{__rm} -rf $RPM_BUILD_ROOT%{_sysconfdir}/nginx/koi-*
 
 %{__mkdir} -p $RPM_BUILD_ROOT%{_localstatedir}/log/nginx
 %{__mkdir} -p $RPM_BUILD_ROOT%{_localstatedir}/run/nginx
 %{__mkdir} -p $RPM_BUILD_ROOT%{_localstatedir}/cache/nginx
 
-%{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/nginx/conf.d
+%{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/nginx/vhosts
 %{__rm} $RPM_BUILD_ROOT%{_sysconfdir}/nginx/nginx.conf
 %{__install} -m 644 -p %{SOURCE4} \
    $RPM_BUILD_ROOT%{_sysconfdir}/nginx/nginx.conf
-%{__install} -m 644 -p %{SOURCE5} \
-   $RPM_BUILD_ROOT%{_sysconfdir}/nginx/conf.d/default.conf
-%{__install} -m 644 -p %{SOURCE6} \
-   $RPM_BUILD_ROOT%{_sysconfdir}/nginx/conf.d/example_ssl.conf
 
 %{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig
 %{__install} -m 644 -p %{SOURCE3} \
@@ -155,20 +117,8 @@ make %{?_smp_mflags}
 
 # install SYSV init stuff
 %{__mkdir} -p $RPM_BUILD_ROOT%{_initrddir}
-%if 0%{?suse_version}
-%{__install} -m755 %{SOURCE7} \
-   $RPM_BUILD_ROOT%{_initrddir}/nginx
-%else
 %{__install} -m755 %{SOURCE2} \
    $RPM_BUILD_ROOT%{_initrddir}/nginx
-
-%endif
-# install log rotation stuff
-%{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d
-%{__install} -m 644 -p %{SOURCE1} \
-   $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/nginx
-%{__install} -m644 %{_builddir}/%{name}-%{version}/objs/nginx.debug \
-   $RPM_BUILD_ROOT%{_sbindir}/nginx.debug
 
 %clean
 %{__rm} -rf $RPM_BUILD_ROOT
@@ -179,59 +129,30 @@ make %{?_smp_mflags}
 %{_sbindir}/nginx
 
 %dir %{_sysconfdir}/nginx
-%dir %{_sysconfdir}/nginx/conf.d
+%dir %{_sysconfdir}/nginx/vhosts
 
 %config(noreplace) %{_sysconfdir}/nginx/nginx.conf
-%config(noreplace) %{_sysconfdir}/nginx/conf.d/default.conf
-%config(noreplace) %{_sysconfdir}/nginx/conf.d/example_ssl.conf
 %config(noreplace) %{_sysconfdir}/nginx/mime.types
 %config(noreplace) %{_sysconfdir}/nginx/fastcgi_params
-%config(noreplace) %{_sysconfdir}/nginx/scgi_params
-%config(noreplace) %{_sysconfdir}/nginx/uwsgi_params
-%config(noreplace) %{_sysconfdir}/nginx/koi-utf
-%config(noreplace) %{_sysconfdir}/nginx/koi-win
 %config(noreplace) %{_sysconfdir}/nginx/win-utf
 
-%config(noreplace) %{_sysconfdir}/logrotate.d/nginx
 %config(noreplace) %{_sysconfdir}/sysconfig/nginx
 %{_initrddir}/nginx
 
-%dir %{_datadir}/nginx
-%dir %{_datadir}/nginx/html
-%{_datadir}/nginx/html/*
+#%dir %{_datadir}/nginx
+#%dir %{_datadir}/nginx/html
+#%{_datadir}/nginx/html/*
 
 %attr(0755,root,root) %dir %{_localstatedir}/cache/nginx
 %attr(0755,root,root) %dir %{_localstatedir}/log/nginx
 
-%files debug
-%attr(0755,root,root) %{_sbindir}/nginx.debug
-
 %pre
-# Add the "nginx" user
-getent group %{nginx_group} >/dev/null || groupadd -r %{nginx_group}
-getent passwd %{nginx_user} >/dev/null || \
-    useradd -r -g %{nginx_group} -s /sbin/nologin \
-    -d %{nginx_home} -c "nginx user"  %{nginx_user}
 exit 0
 
 %post
 # Register the nginx service
 if [ $1 -eq 1 ]; then
     /sbin/chkconfig --add nginx
-    # print site info
-    cat <<BANNER
-----------------------------------------------------------------------
-
-Thanks for using NGINX!
-
-Check out our community web site:
-* http://nginx.org/en/support.html
-
-If you have questions about commercial support for NGINX please visit:
-* http://www.nginx.com/support.html
-
-----------------------------------------------------------------------
-BANNER
 
     # Touch and set permisions on default log files on installation
 
@@ -239,13 +160,13 @@ BANNER
         if [ ! -e %{_localstatedir}/log/nginx/access.log ]; then
             touch %{_localstatedir}/log/nginx/access.log
             %{__chmod} 640 %{_localstatedir}/log/nginx/access.log
-            %{__chown} nginx:adm %{_localstatedir}/log/nginx/access.log
+            %{__chown} nobody:nobody %{_localstatedir}/log/nginx/access.log
         fi
 
         if [ ! -e %{_localstatedir}/log/nginx/error.log ]; then
             touch %{_localstatedir}/log/nginx/error.log
             %{__chmod} 640 %{_localstatedir}/log/nginx/error.log
-            %{__chown} nginx:adm %{_localstatedir}/log/nginx/error.log
+            %{__chown} nobody:nobody %{_localstatedir}/log/nginx/error.log
         fi
     fi
 fi
@@ -262,6 +183,16 @@ if [ $1 -ge 1 ]; then
 fi
 
 %changelog
+* Thu Oct  9 2014 Takashi Masuda <masutaka@feedforce.jp>
+- 1.7.6 for ff2
+- Change nginx.conf to 1.7.6 default
+
+* Wed Oct  8 2014 Kenta ONISHI <onishi@feedforce.jp>
+- 1.7.6 for ff
+
+* Tue Apr 24 2013 Kenta ONISHI <onishi@feedforce.jp>
+- modified for feedforce with 1.2.8
+
 * Tue Apr  2 2013 Sergey Budnevitch <sb@nginx.com>
 - set permissions on default log files at installation
 - 1.2.8
