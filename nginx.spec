@@ -26,6 +26,7 @@ Group: System Environment/Daemons
 %endif
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
+BuildRequires: gcc
 BuildRequires: zlib-devel
 BuildRequires: pcre-devel
 BuildRequires: perl
