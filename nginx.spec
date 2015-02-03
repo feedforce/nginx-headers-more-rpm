@@ -107,6 +107,7 @@ strip $RPM_BUILD_ROOT%{_sbindir}/nginx
 %{__mkdir} -p $RPM_BUILD_ROOT%{_localstatedir}/run/nginx
 %{__mkdir} -p $RPM_BUILD_ROOT%{_localstatedir}/cache/nginx
 
+%{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/nginx/conf.d
 %{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/nginx/vhosts
 %{__rm} $RPM_BUILD_ROOT%{_sysconfdir}/nginx/nginx.conf
 %{__install} -m 644 -p %{SOURCE4} \
@@ -130,6 +131,7 @@ strip $RPM_BUILD_ROOT%{_sbindir}/nginx
 %{_sbindir}/nginx
 
 %dir %{_sysconfdir}/nginx
+%dir %{_sysconfdir}/nginx/conf.d
 %dir %{_sysconfdir}/nginx/vhosts
 
 %config(noreplace) %{_sysconfdir}/nginx/nginx.conf
@@ -184,6 +186,9 @@ if [ $1 -ge 1 ]; then
 fi
 
 %changelog
+* Tue Feb  3 2015 Takashi Masuda <masutaka@feedforce.jp>
+- mkdir /etc/nginx/conf.d
+
 * Fri Jan 23 2015 Takashi Masuda <masutaka@feedforce.jp>
 - 1.7.9 for ff
 
