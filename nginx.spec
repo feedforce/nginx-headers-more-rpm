@@ -5,7 +5,7 @@
 
 Summary: nginx is a high performance web server
 Name: nginx
-Version: 1.7.9
+Version: 1.7.10
 Release: ff1%{?dist}
 Packager: feedforce Inc. <socialplus_admin@feedforce.jp>
 Vendor: nginx inc.
@@ -186,6 +186,9 @@ if [ $1 -ge 1 ]; then
 fi
 
 %changelog
+* Wed Feb 18 2015 Shota Miyamoto <miyamoto@feedforce.jp>
+- 1.7.10 for ff
+
 * Tue Feb  3 2015 Takashi Masuda <masutaka@feedforce.jp>
 - mkdir /etc/nginx/conf.d
 
