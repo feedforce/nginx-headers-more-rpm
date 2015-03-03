@@ -201,7 +201,7 @@ fi
 * Wed Oct  8 2014 Kenta ONISHI <onishi@feedforce.jp>
 - 1.7.6 for ff
 
-* Tue Apr 24 2013 Kenta ONISHI <onishi@feedforce.jp>
+* Wed Apr 24 2013 Kenta ONISHI <onishi@feedforce.jp>
 - modified for feedforce with 1.2.8
 
 * Tue Apr  2 2013 Sergey Budnevitch <sb@nginx.com>
@@ -277,5 +277,5 @@ fi
 - 1.0.6
 - replace "conf.d/*" config include with "conf.d/*.conf" in default nginx.conf
 
-* Tue Aug 10 2011 Sergey Budnevitch
+* Wed Aug 10 2011 Sergey Budnevitch
 - Initial release
