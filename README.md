@@ -2,52 +2,61 @@
 
 [Nginx](http://nginx.org) with [headers-more-module](http://wiki.nginx.org/NginxHttpHeadersMoreModule)
 
-# Example to build SRPM and RPM
+# How to build SRPM and RPM?
+
+You can build SRPM and RPM with headers-more-module using the official SRPM.
 
 You need to install [VirtualBox](https://www.virtualbox.org/) and [Vagrant](http://www.vagrantup.com/).
 
-```
-$ vagrant up centos7
-$ vagrant ssh centos7
-$ mkdir -p ~/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
-$ (cd ~/rpmbuild/SOURCES && curl -LO http://nginx.org/download/nginx-1.7.10.tar.gz)
-$ (cd ~/rpmbuild/SOURCES && curl -L -o headers-more-nginx-module-0.25.tar.gz https://github.com/openresty/headers-more-nginx-module/archive/v0.25.tar.gz)
-$ cp /vagrant/{nginx.conf,nginx.init,nginx.sysconf} ~/rpmbuild/SOURCES
-$ cp /vagrant/nginx.spec ~/rpmbuild/SPECS
-$ sudo yum update -y
-$ sudo yum install -y rpm-build
-$ rpmbuild -ba ~/rpmbuild/SPECS/nginx.spec
-エラー: ビルド依存性の失敗:
-        gcc は nginx-1.7.10-ff1.el7.centos.x86_64 に必要とされています
-        zlib-devel は nginx-1.7.10-ff1.el7.centos.x86_64 に必要とされています
-        pcre-devel は nginx-1.7.10-ff1.el7.centos.x86_64 に必要とされています
-        openssl-devel は nginx-1.7.10-ff1.el7.centos.x86_64 に必要とされています
-$ sudo yum install -y gcc zlib-devel pcre-devel openssl-devel
-$ rpmbuild -ba ~/rpmbuild/SPECS/nginx.spec
-(省略)
-書き込み完了: /home/vagrant/rpmbuild/SRPMS/nginx-1.7.10-ff1.el7.centos.src.rpm
-書き込み完了: /home/vagrant/rpmbuild/RPMS/x86_64/nginx-1.7.10-ff1.el7.centos.x86_64.rpm
-書き込み完了: /home/vagrant/rpmbuild/RPMS/x86_64/nginx-debuginfo-1.7.10-ff1.el7.centos.x86_64.rpm
-```
-
-## How to build RPM from SRPM
+### CentOS7
 
 ```
 $ vagrant up centos7
 $ vagrant ssh centos7
 $ sudo yum update -y
-$ sudo yum install -y rpm-build
-$ curl -LO https://github.com/feedforce/nginx-headers-more-rpm/releases/download/1.7.10-ff1/nginx-1.7.10-ff1.el7.centos.src.rpm
-$ rpmbuild --rebuild nginx-1.7.10-ff1.el7.centos.src.rpm
-nginx-1.7.10-ff1.el7.centos.src.rpm をインストール中です。
+$ sudo yum install -y rpm-build gcc
+$ curl -LO http://nginx.org/packages/mainline/centos/7/SRPMS/nginx-1.7.10-1.el7.ngx.src.rpm
+$ rpm -Uvh --nomd5 nginx-1.7.10-1.el7.ngx.src.rpm
+$ cd ~/rpmbuild/SOURCES
+$ curl -L -o headers-more-nginx-module-0.25.tar.gz https://github.com/openresty/headers-more-nginx-module/archive/v0.25.tar.gz
+$ cd ~/rpmbuild/SPECS
+$ patch -p0 < /vagrant/nginx.spec.centos7.patch
+$ rpmbuild -ba nginx.spec
 エラー: ビルド依存性の失敗:
-        gcc は nginx-1.7.10-ff1.el7.centos.x86_64 に必要とされています
-        zlib-devel は nginx-1.7.10-ff1.el7.centos.x86_64 に必要とされています
-        pcre-devel は nginx-1.7.10-ff1.el7.centos.x86_64 に必要とされています
-        openssl-devel は nginx-1.7.10-ff1.el7.centos.x86_64 に必要とされています
-$ sudo yum install -y gcc zlib-devel pcre-devel openssl-devel
-$ rpmbuild --rebuild nginx-1.7.10-ff1.el7.centos.src.rpm
+        openssl-devel >= 1.0.1 は nginx-1:1.7.10-ff2.el7.centos.ngx.x86_64 に必要とされています
+        zlib-devel は nginx-1:1.7.10-ff2.el7.centos.ngx.x86_64 に必要とされています
+        pcre-devel は nginx-1:1.7.10-ff2.el7.centos.ngx.x86_64 に必要とされています
+$ sudo yum install -y openssl-devel zlib-devel pcre-devel
+$ rpmbuild -ba nginx.spec
 (省略)
-書き込み完了: /home/vagrant/rpmbuild/RPMS/x86_64/nginx-1.7.10-ff1.el7.centos.x86_64.rpm
-書き込み完了: /home/vagrant/rpmbuild/RPMS/x86_64/nginx-debuginfo-1.7.10-ff1.el7.centos.x86_64.rpm
+書き込み完了: /home/vagrant/rpmbuild/SRPMS/nginx-1.7.10-ff2.el7.centos.ngx.src.rpm
+書き込み完了: /home/vagrant/rpmbuild/RPMS/x86_64/nginx-1.7.10-ff2.el7.centos.ngx.x86_64.rpm
+書き込み完了: /home/vagrant/rpmbuild/RPMS/x86_64/nginx-debug-1.7.10-ff2.el7.centos.ngx.x86_64.rpm
+書き込み完了: /home/vagrant/rpmbuild/RPMS/x86_64/nginx-debuginfo-1.7.10-ff2.el7.centos.ngx.x86_64.rpm
+```
+
+### CentOS6
+
+```
+$ vagrant up centos6
+$ vagrant ssh centos6
+$ sudo yum update -y
+$ sudo yum install -y rpm-build gcc
+$ curl -LO http://nginx.org/packages/mainline/centos/6/SRPMS/nginx-1.7.10-1.el6.ngx.src.rpm
+$ rpm -Uvh --nomd5 nginx-1.7.10-1.el6.ngx.src.rpm
+$ cd ~/rpmbuild/SOURCES
+$ curl -L -o headers-more-nginx-module-0.25.tar.gz https://github.com/openresty/headers-more-nginx-module/archive/v0.25.tar.gz
+$ cd ~/rpmbuild/SPECS
+$ patch -p0 < /vagrant/nginx.spec.centos6.patch
+$ rpmbuild -ba nginx.spec
+エラー: ビルド依存性の失敗:
+        openssl-devel >= 1.0.1 は nginx-1.7.10-ff2.el6.ngx.x86_64 に必要とされています
+        zlib-devel は nginx-1.7.10-ff2.el6.ngx.x86_64 に必要とされています
+        pcre-devel は nginx-1.7.10-ff2.el6.ngx.x86_64 に必要とされています
+$ sudo yum install -y openssl-devel zlib-devel pcre-devel
+$ rpmbuild -ba nginx.spec
+(省略)
+書き込み完了: /home/vagrant/rpmbuild/SRPMS/nginx-1.7.10-ff2.el6.ngx.src.rpm
+書き込み完了: /home/vagrant/rpmbuild/RPMS/x86_64/nginx-1.7.10-ff2.el6.ngx.x86_64.rpm
+書き込み完了: /home/vagrant/rpmbuild/RPMS/x86_64/nginx-debug-1.7.10-ff2.el6.ngx.x86_64.rpm
 ```
