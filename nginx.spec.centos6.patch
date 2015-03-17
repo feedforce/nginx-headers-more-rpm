@@ -1,0 +1,171 @@
+--- nginx.spec.orig	2015-03-16 09:50:29.312314010 +0000
++++ nginx.spec	2015-03-16 10:02:44.682844538 +0000
+@@ -59,7 +59,8 @@
+ Summary: High performance web server
+ Name: nginx
+ Version: 1.7.10
+-Release: 1%{?dist}.ngx
++Release: ff2%{?dist}.ngx
++Packager: feedforce Inc. <socialplus_admin@feedforce.jp>
+ Vendor: nginx inc.
+ URL: http://nginx.org/
+ 
+@@ -74,6 +75,7 @@
+ Source8: nginx.service
+ Source9: nginx.upgrade.sh
+ Source10: nginx.suse.logrotate
++Source11: headers-more-nginx-module-0.25.tar.gz
+ 
+ License: 2-clause BSD-like license
+ 
+@@ -100,6 +102,7 @@
+ 
+ %prep
+ %setup -q
++%setup -b 11 -q
+ 
+ %build
+ ./configure \
+@@ -119,23 +122,24 @@
+         --group=%{nginx_group} \
+         --with-http_ssl_module \
+         --with-http_realip_module \
+-        --with-http_addition_module \
+-        --with-http_sub_module \
+-        --with-http_dav_module \
+-        --with-http_flv_module \
+-        --with-http_mp4_module \
+-        --with-http_gunzip_module \
+         --with-http_gzip_static_module \
+-        --with-http_random_index_module \
+-        --with-http_secure_link_module \
+         --with-http_stub_status_module \
+-        --with-http_auth_request_module \
+-        --with-mail \
+-        --with-mail_ssl_module \
+         --with-file-aio \
+-        --with-ipv6 \
++        --with-pcre \
++        --without-http_autoindex_module \
++        --without-http_empty_gif_module \
++        --without-http_geo_module \
++        --without-http_scgi_module \
++        --without-http_ssi_module \
++        --without-http_split_clients_module \
++        --without-http_upstream_ip_hash_module \
++        --without-http_userid_module \
++        --without-http_uwsgi_module \
++        --without-mail_imap_module \
++        --without-mail_pop3_module \
++        --without-mail_smtp_module \
+         --with-debug \
+-        %{?with_spdy:--with-http_spdy_module} \
++        --add-module=../headers-more-nginx-module-0.25 \
+         --with-cc-opt="%{optflags} $(pcre-config --cflags)" \
+         $*
+ make %{?_smp_mflags}
+@@ -158,22 +162,23 @@
+         --group=%{nginx_group} \
+         --with-http_ssl_module \
+         --with-http_realip_module \
+-        --with-http_addition_module \
+-        --with-http_sub_module \
+-        --with-http_dav_module \
+-        --with-http_flv_module \
+-        --with-http_mp4_module \
+-        --with-http_gunzip_module \
+         --with-http_gzip_static_module \
+-        --with-http_random_index_module \
+-        --with-http_secure_link_module \
+         --with-http_stub_status_module \
+-        --with-http_auth_request_module \
+-        --with-mail \
+-        --with-mail_ssl_module \
+         --with-file-aio \
+-        --with-ipv6 \
+-        %{?with_spdy:--with-http_spdy_module} \
++        --with-pcre \
++        --without-http_autoindex_module \
++        --without-http_empty_gif_module \
++        --without-http_geo_module \
++        --without-http_scgi_module \
++        --without-http_ssi_module \
++        --without-http_split_clients_module \
++        --without-http_upstream_ip_hash_module \
++        --without-http_userid_module \
++        --without-http_uwsgi_module \
++        --without-mail_imap_module \
++        --without-mail_pop3_module \
++        --without-mail_smtp_module \
++        --add-module=../headers-more-nginx-module-0.25 \
+         --with-cc-opt="%{optflags} $(pcre-config --cflags)" \
+         $*
+ make %{?_smp_mflags}
+@@ -183,23 +188,23 @@
+ %{__make} DESTDIR=$RPM_BUILD_ROOT install
+ 
+ %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/nginx
+-%{__mv} $RPM_BUILD_ROOT%{_sysconfdir}/nginx/html $RPM_BUILD_ROOT%{_datadir}/nginx/
+ 
+ %{__rm} -f $RPM_BUILD_ROOT%{_sysconfdir}/nginx/*.default
+ %{__rm} -f $RPM_BUILD_ROOT%{_sysconfdir}/nginx/fastcgi.conf
++%{__rm} -rf $RPM_BUILD_ROOT%{_sysconfdir}/nginx/html
++%{__rm} -rf $RPM_BUILD_ROOT%{_sysconfdir}/nginx/scgi_params
++%{__rm} -rf $RPM_BUILD_ROOT%{_sysconfdir}/nginx/uwsgi_params
++%{__rm} -rf $RPM_BUILD_ROOT%{_sysconfdir}/nginx/koi-*
+ 
+ %{__mkdir} -p $RPM_BUILD_ROOT%{_localstatedir}/log/nginx
+ %{__mkdir} -p $RPM_BUILD_ROOT%{_localstatedir}/run/nginx
+ %{__mkdir} -p $RPM_BUILD_ROOT%{_localstatedir}/cache/nginx
+ 
+ %{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/nginx/conf.d
++%{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/nginx/vhosts
+ %{__rm} $RPM_BUILD_ROOT%{_sysconfdir}/nginx/nginx.conf
+ %{__install} -m 644 -p %{SOURCE4} \
+    $RPM_BUILD_ROOT%{_sysconfdir}/nginx/nginx.conf
+-%{__install} -m 644 -p %{SOURCE5} \
+-   $RPM_BUILD_ROOT%{_sysconfdir}/nginx/conf.d/default.conf
+-%{__install} -m 644 -p %{SOURCE6} \
+-   $RPM_BUILD_ROOT%{_sysconfdir}/nginx/conf.d/example_ssl.conf
+ 
+ %{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig
+ %{__install} -m 644 -p %{SOURCE3} \
+@@ -248,16 +253,11 @@
+ 
+ %dir %{_sysconfdir}/nginx
+ %dir %{_sysconfdir}/nginx/conf.d
++%dir %{_sysconfdir}/nginx/vhosts
+ 
+ %config(noreplace) %{_sysconfdir}/nginx/nginx.conf
+-%config(noreplace) %{_sysconfdir}/nginx/conf.d/default.conf
+-%config(noreplace) %{_sysconfdir}/nginx/conf.d/example_ssl.conf
+ %config(noreplace) %{_sysconfdir}/nginx/mime.types
+ %config(noreplace) %{_sysconfdir}/nginx/fastcgi_params
+-%config(noreplace) %{_sysconfdir}/nginx/scgi_params
+-%config(noreplace) %{_sysconfdir}/nginx/uwsgi_params
+-%config(noreplace) %{_sysconfdir}/nginx/koi-utf
+-%config(noreplace) %{_sysconfdir}/nginx/koi-win
+ %config(noreplace) %{_sysconfdir}/nginx/win-utf
+ 
+ %config(noreplace) %{_sysconfdir}/logrotate.d/nginx
+@@ -270,10 +270,6 @@
+ %{_initrddir}/nginx
+ %endif
+ 
+-%dir %{_datadir}/nginx
+-%dir %{_datadir}/nginx/html
+-%{_datadir}/nginx/html/*
+-
+ %attr(0755,root,root) %dir %{_localstatedir}/cache/nginx
+ %attr(0755,root,root) %dir %{_localstatedir}/log/nginx
+ 
+@@ -350,6 +346,9 @@
+ fi
+ 
+ %changelog
++* Mon Mar 16 2015 Takashi Masuda <masutaka@feedforce.jp>
++- 1.7.10 for feedforce
++
+ * Tue Feb 10 2015 Sergey Budnevitch <sb@nginx.com>
+ - 1.7.10
+ 
