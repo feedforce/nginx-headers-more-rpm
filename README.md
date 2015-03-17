@@ -16,7 +16,7 @@ $ vagrant ssh centos7
 $ sudo yum update -y
 $ sudo yum install -y rpm-build gcc
 $ curl -LO http://nginx.org/packages/mainline/centos/7/SRPMS/nginx-1.7.10-1.el7.ngx.src.rpm
-$ rpm -Uvh --nomd5 nginx-1.7.10-1.el7.ngx.src.rpm
+$ rpm -Uvh nginx-1.7.10-1.el7.ngx.src.rpm
 $ cd ~/rpmbuild/SOURCES
 $ curl -L -o headers-more-nginx-module-0.25.tar.gz https://github.com/openresty/headers-more-nginx-module/archive/v0.25.tar.gz
 $ cd ~/rpmbuild/SPECS
@@ -43,7 +43,7 @@ $ vagrant ssh centos6
 $ sudo yum update -y
 $ sudo yum install -y rpm-build gcc
 $ curl -LO http://nginx.org/packages/mainline/centos/6/SRPMS/nginx-1.7.10-1.el6.ngx.src.rpm
-$ rpm -Uvh --nomd5 nginx-1.7.10-1.el6.ngx.src.rpm
+$ rpm -Uvh nginx-1.7.10-1.el6.ngx.src.rpm
 $ cd ~/rpmbuild/SOURCES
 $ curl -L -o headers-more-nginx-module-0.25.tar.gz https://github.com/openresty/headers-more-nginx-module/archive/v0.25.tar.gz
 $ cd ~/rpmbuild/SPECS
