@@ -11,11 +11,11 @@ You need to install [VirtualBox](https://www.virtualbox.org/) and [Vagrant](http
 
 ### Update nginx.spec.centos7.patch and nginx.spec.centos7.patch
 
-please edit to Version, Release, and changelog
-if new module exist, please edit to new version
+Edit to Version, Release, and changelog.  
+If new module exist, edit to new version.
 
-You refer to changelog of nginx.spec.
-In order to edit the changelog of nginx.spec.centos7.patch and nginx.spec.centos7.patch
+You refer to changelog of nginx.spec.  
+In order to edit the changelog of nginx.spec.centos7.patch and nginx.spec.centos7.patch.
 
 ```
 $ curl -LO http://nginx.org/packages/centos/6/SRPMS/nginx-1.8.0-1.el7.ngx.src.rpm
@@ -25,7 +25,7 @@ $ ls
 nginx.spec
 ```
 
-(example)[https://github.com/feedforce/nginx-headers-more-rpm/blob/master/nginx.spec.centos6.patch]
+[example](https://github.com/feedforce/nginx-headers-more-rpm/blob/master/nginx.spec.centos6.patch)
 
 
 ### CentOS7
