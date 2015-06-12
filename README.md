@@ -6,7 +6,7 @@ You can build SRPM and RPM with headers-more-module using the official SRPM.
 
 You need to install [VirtualBox](https://www.virtualbox.org/) and [Vagrant](http://www.vagrantup.com/).
 
-# How to update nginx.spec.centos.patch
+# How to update nginx.spec.centos[67].patch?
 
 ### CentOS7
 
@@ -23,7 +23,11 @@ $ patch -p0 < /vagrant/nginx.spec.centos7.patch
     patching file nginx.spec
     Hunk #1 FAILED at 59.
     Hunk #9 FAILED at 345.
-$ vi nginx.spec # Add Release, Packager, changelog and update module version
+# Fix `Release:`
+# Add `Packager:`
+# Add your changelog to `%changelog`
+# Update headers-more-nginx-module version if needed
+$ vi nginx.spec
 $ diff -u nginx.spec.org nginx.spec > /vagrant/nginx.spec.centos7.patch
 ```
 
@@ -42,11 +46,13 @@ $ patch -p0 < /vagrant/nginx.spec.centos6.patch
     patching file nginx.spec
     Hunk #1 FAILED at 59.
     Hunk #9 FAILED at 345.
-$ vi nginx.spec # Add Release, Packager, changelog and update module version
+# Fix `Release:`
+# Add `Packager:`
+# Add your changelog to `%changelog`
+# Update headers-more-nginx-module version if needed
+$ vi nginx.spec
 $ diff -u nginx.spec.org nginx.spec > /vagrant/nginx.spec.centos6.patch
 ```
-
-[Edit nginx.spec example](https://github.com/feedforce/nginx-headers-more-rpm/blob/master/nginx.spec.centos7.patch)
 
 # How to build SRPM and RPM?
 
