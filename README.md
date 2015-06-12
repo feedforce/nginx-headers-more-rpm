@@ -34,7 +34,7 @@ $ vagrant up centos6
 $ vagrant ssh centos6
 $ sudo yum update -y
 $ sudo yum install -y rpm-build gcc
-$ curl -LO http://nginx.org/packages/centos/7/SRPMS/nginx-1.8.0-1.el6.ngx.src.rpm
+$ curl -LO http://nginx.org/packages/centos/6/SRPMS/nginx-1.8.0-1.el6.ngx.src.rpm
 $ rpm -Uvh nginx-1.8.0-1.el6.ngx.src.rpm
 $ cd ~/rpmbuild/SPECS
 $ cp nginx.spec nginx.spec.org
