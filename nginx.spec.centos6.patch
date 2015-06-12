@@ -163,7 +163,7 @@
  fi
  
  %changelog
-+* Tue Jun 9 2015 Shota Miyamoto <miyamoto@feedforce.jp>
++* Tue Jun  9 2015 Shota Miyamoto <miyamoto@feedforce.jp>
 +- 1.8.0 for feedforce
 +
  * Tue Apr 21 2015 Sergey Budnevitch <sb@nginx.com>
