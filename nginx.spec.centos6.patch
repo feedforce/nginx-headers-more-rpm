@@ -1,11 +1,11 @@
---- nginx.spec.orig	2015-03-16 09:50:29.312314010 +0000
-+++ nginx.spec	2015-03-16 10:02:44.682844538 +0000
+--- nginx.spec.org	2015-04-21 15:34:33.000000000 +0000
++++ nginx.spec	2015-06-09 09:30:31.000000000 +0000
 @@ -59,7 +59,8 @@
  Summary: High performance web server
  Name: nginx
- Version: 1.7.10
+ Version: 1.8.0
 -Release: 1%{?dist}.ngx
-+Release: ff2%{?dist}.ngx
++Release: ff1%{?dist}.ngx
 +Packager: feedforce Inc. <socialplus_admin@feedforce.jp>
  Vendor: nginx inc.
  URL: http://nginx.org/
@@ -14,7 +14,7 @@
  Source8: nginx.service
  Source9: nginx.upgrade.sh
  Source10: nginx.suse.logrotate
-+Source11: headers-more-nginx-module-0.25.tar.gz
++Source11: headers-more-nginx-module-0.26.tar.gz
  
  License: 2-clause BSD-like license
  
@@ -60,7 +60,7 @@
 +        --without-mail_smtp_module \
          --with-debug \
 -        %{?with_spdy:--with-http_spdy_module} \
-+        --add-module=../headers-more-nginx-module-0.25 \
++        --add-module=../headers-more-nginx-module-0.26 \
          --with-cc-opt="%{optflags} $(pcre-config --cflags)" \
          $*
  make %{?_smp_mflags}
@@ -97,7 +97,7 @@
 +        --without-mail_imap_module \
 +        --without-mail_pop3_module \
 +        --without-mail_smtp_module \
-+        --add-module=../headers-more-nginx-module-0.25 \
++        --add-module=../headers-more-nginx-module-0.26 \
          --with-cc-opt="%{optflags} $(pcre-config --cflags)" \
          $*
  make %{?_smp_mflags}
@@ -163,9 +163,9 @@
  fi
  
  %changelog
-+* Mon Mar 16 2015 Takashi Masuda <masutaka@feedforce.jp>
-+- 1.7.10 for feedforce
++* Tue Jun  9 2015 Shota Miyamoto <miyamoto@feedforce.jp>
++- 1.8.0 for feedforce
 +
- * Tue Feb 10 2015 Sergey Budnevitch <sb@nginx.com>
- - 1.7.10
+ * Tue Apr 21 2015 Sergey Budnevitch <sb@nginx.com>
+ - 1.8.0
  
