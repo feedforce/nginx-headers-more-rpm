@@ -23,11 +23,13 @@ $ patch -p0 < /vagrant/nginx.spec.centos7.patch
     patching file nginx.spec
     Hunk #1 FAILED at 59.
     Hunk #9 FAILED at 345.
-# Fix `Release:`
-# Add `Packager:`
-# Add your changelog to `%changelog`
-# Update headers-more-nginx-module version if needed
-$ vi nginx.spec
+
+# Modify as below using your favorite editor.
+#   Fix `Release:`
+#   Add `Packager:`
+#   Add your changelog to `%changelog`
+#   Update headers-more-nginx-module version if needed
+
 $ diff -u nginx.spec.org nginx.spec > /vagrant/nginx.spec.centos7.patch
 ```
 
@@ -46,11 +48,13 @@ $ patch -p0 < /vagrant/nginx.spec.centos6.patch
     patching file nginx.spec
     Hunk #1 FAILED at 59.
     Hunk #9 FAILED at 345.
-# Fix `Release:`
-# Add `Packager:`
-# Add your changelog to `%changelog`
-# Update headers-more-nginx-module version if needed
-$ vi nginx.spec
+
+# Modify as below using your favorite editor.
+#   Fix `Release:`
+#   Add `Packager:`
+#   Add your changelog to `%changelog`
+#   Update headers-more-nginx-module version if needed
+
 $ diff -u nginx.spec.org nginx.spec > /vagrant/nginx.spec.centos6.patch
 ```
 
