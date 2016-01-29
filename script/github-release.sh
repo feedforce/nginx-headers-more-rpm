@@ -47,7 +47,7 @@ EOS
 
 upload_rpm() {
   RPM_FILE=$1
-  github-release upload
+  github-release upload \
     --user "$CIRCLE_PROJECT_USERNAME" \
     --repo "$CIRCLE_PROJECT_REPONAME" \
     --tag "$RELEASE_TAG" \
