@@ -6,7 +6,7 @@ You can build RPM with headers-more-module using the official SRPM.
 
 # How to build RPM?
 
-1. Create your feature branch(e.g nginx-1.8.0)
+1. Create your feature branch(e.g nginx-1.8.1)
 2. Update 2 files according to the methods described below
     - nginx.spec.centos6.patch
     - nginx.spec.centos7.patch
@@ -28,15 +28,16 @@ You can build RPM with headers-more-module using the official SRPM.
 ### CentOS6
 
 ```
-$ curl -LO http://nginx.org/packages/centos/6/SRPMS/nginx-1.8.0-1.el6.ngx.src.rpm
-$ rpm2cpio.pl nginx-1.8.0-1.el6.ngx.src.rpm | cpio -idv nginx.spec
+$ curl -LO http://nginx.org/packages/centos/6/SRPMS/nginx-1.8.1-1.el6.ngx.src.rpm
+$ rpm2cpio.pl nginx-1.8.1-1.el6.ngx.src.rpm | cpio -idv nginx.spec
 $ cp nginx.spec nginx.spec.org
 $ patch -p0 < nginx.spec.centos6.patch
-    patching file nginx.spec
-    Hunk #1 FAILED at 59.
-    Hunk #9 FAILED at 345.
+patching file nginx.spec
+Hunk #1 FAILED at 59.
+Hunk #9 FAILED at 346.
+2 out of 9 hunks FAILED -- saving rejects to file nginx.spec.rej
 
-# Modify as below using your favorite editor.
+# Modify `nginx.spec` as below using your favorite editor.
 #   Fix `Release:`
 #   Add `Packager:`
 #   Add your changelog to `%changelog`
@@ -48,15 +49,16 @@ $ diff -u nginx.spec.org nginx.spec >! nginx.spec.centos6.patch
 ### CentOS7
 
 ```
-$ curl -LO http://nginx.org/packages/centos/7/SRPMS/nginx-1.8.0-1.el7.ngx.src.rpm
-$ rpm2cpio.pl nginx-1.8.0-1.el7.ngx.src.rpm | cpio -idv nginx.spec
+$ curl -LO http://nginx.org/packages/centos/7/SRPMS/nginx-1.8.1-1.el7.ngx.src.rpm
+$ rpm2cpio.pl nginx-1.8.1-1.el7.ngx.src.rpm | cpio -idv nginx.spec
 $ cp nginx.spec nginx.spec.org
 $ patch -p0 < nginx.spec.centos7.patch
-    patching file nginx.spec
-    Hunk #1 FAILED at 59.
-    Hunk #9 FAILED at 345.
+patching file nginx.spec
+Hunk #1 FAILED at 59.
+Hunk #9 FAILED at 346.
+2 out of 9 hunks FAILED -- saving rejects to file nginx.spec.rej
 
-# Modify as below using your favorite editor.
+# Modify `nginx.spec` as below using your favorite editor.
 #   Fix `Release:`
 #   Add `Packager:`
 #   Add your changelog to `%changelog`
