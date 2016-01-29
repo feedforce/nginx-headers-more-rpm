@@ -2,7 +2,7 @@
 
 set -xe
 
-PATCH_PATH=$HOME/nginx.spec.centos7.patch
+PATCH_PATH=$HOME/$CIRCLE_PROJECT_REPONAME/nginx.spec.centos7.patch
 
 NGINX_VERSION=$(grep '^ Version:' $PATCH_PATH | cut -d ' ' -f 3)
 
