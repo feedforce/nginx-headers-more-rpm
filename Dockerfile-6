@@ -1,0 +1,19 @@
+FROM centos:6
+MAINTAINER feedforce Inc.
+
+# setup
+RUN yum update -y
+RUN yum install -y gcc rpm-build tar
+
+# nginx dependencies
+RUN yum -y install openssl-devel pcre-devel zlib-devel
+
+# rpmbuild command recommends to use `builder:builder` as user:group.
+RUN useradd -u 1000 builder
+
+ADD script/build-nginx.sh /home/builder/
+RUN chmod a+x /home/builder/build-nginx.sh
+
+ADD nginx.spec.centos6.patch /home/builder/
+
+WORKDIR /home/builder
