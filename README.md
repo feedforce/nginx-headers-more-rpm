@@ -1,4 +1,4 @@
-# What is this spec?
+# What is this repository?
 
 [Nginx](http://nginx.org) with [headers-more-module](http://wiki.nginx.org/NginxHttpHeadersMoreModule)
 

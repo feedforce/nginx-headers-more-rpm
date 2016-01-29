@@ -12,9 +12,9 @@ HEADERS_MORE_VERSION=$(grep 'headers-more-nginx-module-.*\.tar\.gz' $PATCH_PATH 
                          cut -d ' ' -f 2 | \
                          sed -e 's@headers-more-nginx-module-\([0-9]\+\)\.\([0-9]\+\)\.tar\.gz@\1.\2@')
 
-NGINX_RPM_FILE=nginx-${NGINX_VERSION}-1.el${CENTOS_MAJOR_VERSION}.ngx.src.rpm
-curl -LO http://nginx.org/packages/centos/${CENTOS_MAJOR_VERSION}/SRPMS/${NGINX_RPM_FILE}
-rpm -Uvh $NGINX_RPM_FILE
+NGINX_SRPM_FILE=nginx-${NGINX_VERSION}-1.el${CENTOS_MAJOR_VERSION}.ngx.src.rpm
+curl -LO http://nginx.org/packages/centos/${CENTOS_MAJOR_VERSION}/SRPMS/${NGINX_SRPM_FILE}
+rpm -Uvh $NGINX_SRPM_FILE
 
 cd $HOME/rpmbuild/SOURCES
 curl -L -o headers-more-nginx-module-${HEADERS_MORE_VERSION}.tar.gz \
