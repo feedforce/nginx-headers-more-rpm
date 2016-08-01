@@ -6,7 +6,7 @@ CENTOS_MAJOR_VERSION=$(rpm -q --qf '%{VERSION}' $(rpm -q --whatprovides redhat-r
 
 PATCH_PATH=$HOME/nginx.spec.centos${CENTOS_MAJOR_VERSION}.patch
 
-NGINX_VERSION=$(grep '^ Version:' $PATCH_PATH | cut -d ' ' -f 3)
+NGINX_VERSION=$(grep '^ %define main_version' $PATCH_PATH | awk '{print $3}')
 
 HEADERS_MORE_VERSION=$(grep 'headers-more-nginx-module-.*\.tar\.gz' $PATCH_PATH | \
                          cut -d ' ' -f 2 | \
