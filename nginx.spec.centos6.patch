@@ -1,108 +1,84 @@
---- nginx.spec.org	2016-01-29 16:43:00.000000000 +0900
-+++ nginx.spec	2016-01-29 16:48:16.000000000 +0900
-@@ -59,7 +59,8 @@
- Summary: High performance web server
- Name: nginx
- Version: 1.8.1
--Release: 1%{?dist}.ngx
-+Release: ff1%{?dist}.ngx
-+Packager: feedforce Inc. <socialplus_admin@feedforce.jp>
- Vendor: nginx inc.
- URL: http://nginx.org/
+--- nginx.spec.org
++++ nginx.spec
+@@ -48,7 +48,7 @@ BuildRequires: systemd
+ # end of distribution specific definitions
  
-@@ -74,6 +75,7 @@
- Source8: nginx.service
- Source9: nginx.upgrade.sh
- Source10: nginx.suse.logrotate
-+Source11: headers-more-nginx-module-0.29.tar.gz
+ %define main_version 1.10.3
+-%define main_release 1%{?dist}.ngx
++%define main_release dda1%{?dist}.ngx
+ 
+ %define bdir %{_builddir}/%{name}-%{main_version}
+ 
+@@ -61,6 +61,7 @@ Summary: High performance web server
+ Name: nginx
+ Version: %{main_version}
+ Release: %{main_release}
++Packager: Diogo Dutra <dutradda@gmail.com>
+ Vendor: Nginx, Inc.
+ URL: http://nginx.org/
+ Group: %{_group}
+@@ -78,6 +79,7 @@ Source10: nginx.suse.logrotate
+ Source11: nginx-debug.service
+ Source12: COPYRIGHT
+ Source13: nginx.check-reload.sh
++Source14: headers-more-nginx-module-0.29.tar.gz
  
  License: 2-clause BSD-like license
  
-@@ -100,6 +102,7 @@
+@@ -96,7 +98,7 @@ a mail proxy server.
+ %endif
  
  %prep
- %setup -q
-+%setup -b 11 -q
+-%setup -q
++%setup -b 14 -q
+ cp %{SOURCE2} .
+ sed -e 's|%%DEFAULTSTART%%|2 3 4 5|g' -e 's|%%DEFAULTSTOP%%|0 1 6|g' \
+     -e 's|%%PROVIDES%%|nginx|g' < %{SOURCE2} > nginx.init
+@@ -107,13 +109,41 @@ sed -e 's|%%DEFAULTSTART%%||g' -e 's|%%DEFAULTSTOP%%|0 1 2 3 4 5 6|g' \
+ ./configure %{BASE_CONFIGURE_ARGS} \
+     --with-cc-opt="%{WITH_CC_OPT}" \
+     --with-ld-opt="%{WITH_LD_OPT}" \
++    --with-pcre \
++    --without-http_autoindex_module \
++    --without-http_empty_gif_module \
++    --without-http_geo_module \
++    --without-http_scgi_module \
++    --without-http_ssi_module \
++    --without-http_split_clients_module \
++    --without-http_upstream_ip_hash_module \
++    --without-http_userid_module \
++    --without-http_uwsgi_module \
++    --without-mail_imap_module \
++    --without-mail_pop3_module \
++    --without-mail_smtp_module \
++    --add-module=../headers-more-nginx-module-0.29 \
+     --with-debug
+ make %{?_smp_mflags}
+ %{__mv} %{bdir}/objs/nginx \
+     %{bdir}/objs/nginx-debug
+ ./configure %{BASE_CONFIGURE_ARGS} \
+     --with-cc-opt="%{WITH_CC_OPT}" \
+-    --with-ld-opt="%{WITH_LD_OPT}"
++    --with-ld-opt="%{WITH_LD_OPT}" \
++    --with-pcre \
++    --without-http_autoindex_module \
++    --without-http_empty_gif_module \
++    --without-http_geo_module \
++    --without-http_scgi_module \
++    --without-http_ssi_module \
++    --without-http_split_clients_module \
++    --without-http_upstream_ip_hash_module \
++    --without-http_userid_module \
++    --without-http_uwsgi_module \
++    --without-mail_imap_module \
++    --without-mail_pop3_module \
++    --without-mail_smtp_module \
++    --add-module=../headers-more-nginx-module-0.29
+ make %{?_smp_mflags}
  
- %build
- ./configure \
-@@ -119,23 +122,24 @@
-         --group=%{nginx_group} \
-         --with-http_ssl_module \
-         --with-http_realip_module \
--        --with-http_addition_module \
--        --with-http_sub_module \
--        --with-http_dav_module \
--        --with-http_flv_module \
--        --with-http_mp4_module \
--        --with-http_gunzip_module \
-         --with-http_gzip_static_module \
--        --with-http_random_index_module \
--        --with-http_secure_link_module \
-         --with-http_stub_status_module \
--        --with-http_auth_request_module \
--        --with-mail \
--        --with-mail_ssl_module \
-         --with-file-aio \
--        --with-ipv6 \
-+        --with-pcre \
-+        --without-http_autoindex_module \
-+        --without-http_empty_gif_module \
-+        --without-http_geo_module \
-+        --without-http_scgi_module \
-+        --without-http_ssi_module \
-+        --without-http_split_clients_module \
-+        --without-http_upstream_ip_hash_module \
-+        --without-http_userid_module \
-+        --without-http_uwsgi_module \
-+        --without-mail_imap_module \
-+        --without-mail_pop3_module \
-+        --without-mail_smtp_module \
-         --with-debug \
--        %{?with_spdy:--with-http_spdy_module} \
-+        --add-module=../headers-more-nginx-module-0.29 \
-         --with-cc-opt="%{optflags} $(pcre-config --cflags)" \
-         $*
- make %{?_smp_mflags}
-@@ -158,22 +162,23 @@
-         --group=%{nginx_group} \
-         --with-http_ssl_module \
-         --with-http_realip_module \
--        --with-http_addition_module \
--        --with-http_sub_module \
--        --with-http_dav_module \
--        --with-http_flv_module \
--        --with-http_mp4_module \
--        --with-http_gunzip_module \
-         --with-http_gzip_static_module \
--        --with-http_random_index_module \
--        --with-http_secure_link_module \
-         --with-http_stub_status_module \
--        --with-http_auth_request_module \
--        --with-mail \
--        --with-mail_ssl_module \
-         --with-file-aio \
--        --with-ipv6 \
--        %{?with_spdy:--with-http_spdy_module} \
-+        --with-pcre \
-+        --without-http_autoindex_module \
-+        --without-http_empty_gif_module \
-+        --without-http_geo_module \
-+        --without-http_scgi_module \
-+        --without-http_ssi_module \
-+        --without-http_split_clients_module \
-+        --without-http_upstream_ip_hash_module \
-+        --without-http_userid_module \
-+        --without-http_uwsgi_module \
-+        --without-mail_imap_module \
-+        --without-mail_pop3_module \
-+        --without-mail_smtp_module \
-+        --add-module=../headers-more-nginx-module-0.29 \
-         --with-cc-opt="%{optflags} $(pcre-config --cflags)" \
-         $*
- make %{?_smp_mflags}
-@@ -183,23 +188,23 @@
- %{__make} DESTDIR=$RPM_BUILD_ROOT install
+ %install
+@@ -121,10 +151,13 @@ make %{?_smp_mflags}
+ %{__make} DESTDIR=$RPM_BUILD_ROOT INSTALLDIRS=vendor install
  
  %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/nginx
 -%{__mv} $RPM_BUILD_ROOT%{_sysconfdir}/nginx/html $RPM_BUILD_ROOT%{_datadir}/nginx/
@@ -116,29 +92,28 @@
  
  %{__mkdir} -p $RPM_BUILD_ROOT%{_localstatedir}/log/nginx
  %{__mkdir} -p $RPM_BUILD_ROOT%{_localstatedir}/run/nginx
- %{__mkdir} -p $RPM_BUILD_ROOT%{_localstatedir}/cache/nginx
+@@ -139,11 +172,10 @@ cd $RPM_BUILD_ROOT%{_sysconfdir}/nginx && \
+     $RPM_BUILD_ROOT%{_datadir}/doc/%{name}-%{main_version}/
  
  %{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/nginx/conf.d
 +%{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/nginx/vhosts
  %{__rm} $RPM_BUILD_ROOT%{_sysconfdir}/nginx/nginx.conf
  %{__install} -m 644 -p %{SOURCE4} \
-    $RPM_BUILD_ROOT%{_sysconfdir}/nginx/nginx.conf
+     $RPM_BUILD_ROOT%{_sysconfdir}/nginx/nginx.conf
 -%{__install} -m 644 -p %{SOURCE5} \
--   $RPM_BUILD_ROOT%{_sysconfdir}/nginx/conf.d/default.conf
--%{__install} -m 644 -p %{SOURCE6} \
--   $RPM_BUILD_ROOT%{_sysconfdir}/nginx/conf.d/example_ssl.conf
+-    $RPM_BUILD_ROOT%{_sysconfdir}/nginx/conf.d/default.conf
  
  %{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig
  %{__install} -m 644 -p %{SOURCE3} \
-@@ -248,16 +253,11 @@
+@@ -197,16 +229,12 @@ cd $RPM_BUILD_ROOT%{_sysconfdir}/nginx && \
  
  %dir %{_sysconfdir}/nginx
  %dir %{_sysconfdir}/nginx/conf.d
 +%dir %{_sysconfdir}/nginx/vhosts
+ %{_sysconfdir}/nginx/modules
  
  %config(noreplace) %{_sysconfdir}/nginx/nginx.conf
 -%config(noreplace) %{_sysconfdir}/nginx/conf.d/default.conf
--%config(noreplace) %{_sysconfdir}/nginx/conf.d/example_ssl.conf
  %config(noreplace) %{_sysconfdir}/nginx/mime.types
  %config(noreplace) %{_sysconfdir}/nginx/fastcgi_params
 -%config(noreplace) %{_sysconfdir}/nginx/scgi_params
@@ -148,24 +123,23 @@
  %config(noreplace) %{_sysconfdir}/nginx/win-utf
  
  %config(noreplace) %{_sysconfdir}/logrotate.d/nginx
-@@ -270,10 +270,6 @@
- %{_initrddir}/nginx
- %endif
+@@ -224,9 +252,6 @@ cd $RPM_BUILD_ROOT%{_sysconfdir}/nginx && \
  
+ %attr(0755,root,root) %dir %{_libdir}/nginx
+ %attr(0755,root,root) %dir %{_libdir}/nginx/modules
 -%dir %{_datadir}/nginx
 -%dir %{_datadir}/nginx/html
 -%{_datadir}/nginx/html/*
--
+ 
  %attr(0755,root,root) %dir %{_localstatedir}/cache/nginx
  %attr(0755,root,root) %dir %{_localstatedir}/log/nginx
- 
-@@ -350,6 +346,9 @@
+@@ -308,6 +333,9 @@ if [ $1 -ge 1 ]; then
  fi
  
  %changelog
-+* Fri Jan 29 2016 Takashi Masuda <masutaka@feedforce.jp>
-+- 1.8.1 with Headers More module
++* Tue Mar 21 2017 Diogo Dutra <dutradda@gmail.com>
++- 1.10.3 with Headers More module
 +
- * Tue Jan 26 2016 Konstantin Pavlov <thresh@nginx.com>
- - 1.8.1
- 
+ * Tue Jan 31 2017 Konstantin Pavlov <thresh@nginx.com>
+ - 1.10.3
+ - Extended hardening build flags.
