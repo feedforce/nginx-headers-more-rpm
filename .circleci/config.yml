@@ -1,0 +1,100 @@
+version: 2
+
+references:
+  - &docker
+      docker:
+        - image: docker:stable
+      working_directory: /root/project
+
+  - &setup_requirements
+      run:
+        name: Setup requirements
+        command: |
+          apk update
+
+          # Required by CircleCI 2.0: https://circleci.com/docs/2.0/custom-images/#required-tools-for-primary-containers
+          apk add --no-progress git openssh-client tar gzip ca-certificates
+
+  - &restore_cache
+      restore_cache:
+        name: Restore cache
+        keys:
+          - cache-{{ .Environment.COMMON_CACHE_KEY }}
+
+  - &save_cache
+      save_cache:
+        name: Save cache
+        key: cache-{{ .Environment.COMMON_CACHE_KEY }}
+        paths:
+          - $HOME/cache
+
+  - &persist_to_workspace
+      persist_to_workspace:
+        root: /root/project
+        paths:
+          - dist
+
+  - &store_artifacts
+      store_artifacts:
+        path: /root/project/dist
+
+jobs:
+  centos7:
+    <<: *docker
+    steps:
+      - *setup_requirements
+      - checkout
+      - setup_remote_docker
+      - *restore_cache
+      - run:
+          name: Build Docker image for CentOS 7
+          command: ./.circleci/build-docker.sh 7
+      - run:
+          name: Build RPM for CentOS 7
+          command: ./.circleci/run-docker.sh 7
+      - *save_cache
+      - *persist_to_workspace
+      - *store_artifacts
+
+  centos6:
+    <<: *docker
+    steps:
+      - *setup_requirements
+      - checkout
+      - setup_remote_docker
+      - *restore_cache
+      - run:
+          name: Build Docker image for CentOS 6
+          command: ./.circleci/build-docker.sh 6
+      - run:
+          name: Build RPM for CentOS 6
+          command: ./.circleci/run-docker.sh 6
+      - *save_cache
+      - *persist_to_workspace
+      - *store_artifacts
+
+  deploy:
+    <<: *docker
+    steps:
+      - checkout
+      - *setup_requirements
+      - attach_workspace:
+          at: /root/project
+      - deploy:
+          name: Deploy to GitHub Release
+          command: ./.circleci/github-release.sh
+
+workflows:
+  version: 2
+  commit:
+    jobs:
+      - centos7
+      - centos6
+      - deploy:
+          requires:
+            - centos7
+            - centos6
+          filters:
+            branches:
+              only:
+                - master
