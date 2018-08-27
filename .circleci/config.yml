@@ -1,7 +1,7 @@
 version: 2
 
 jobs:
-  build:
+  centos7:
     docker: &docker
       - image: docker:stable
     working_directory: /root/project
@@ -15,33 +15,46 @@ jobs:
             apk add --no-progress git openssh-client tar gzip ca-certificates
       - checkout
       - setup_remote_docker
-      - restore_cache:
+      - restore_cache: &restore_cache
           name: Restore cache
           keys:
             - cache-{{ .Environment.COMMON_CACHE_KEY }}
       - run:
-          name: Build Docker image for CentOS 6
-          command: ./.circleci/build-docker.sh 6
-      - run:
           name: Build Docker image for CentOS 7
           command: ./.circleci/build-docker.sh 7
       - run:
-          name: Build RPM for CentOS 6
-          command: ./.circleci/run-docker.sh 6
-      - run:
           name: Build RPM for CentOS 7
           command: ./.circleci/run-docker.sh 7
-      - save_cache:
+      - save_cache: &save_cache
           name: Save cache
           key: cache-{{ .Environment.COMMON_CACHE_KEY }}
           paths:
             - $HOME/cache
-      - persist_to_workspace:
+      - persist_to_workspace: &persist_to_workspace
           root: /root/project
           paths:
             - dist
-      - store_artifacts:
+      - store_artifacts: &store_artifacts
           path: /root/project/dist
+
+  centos6:
+    docker: *docker
+    working_directory: /root/project
+    steps:
+      - run: *setup_requirements
+      - checkout
+      - setup_remote_docker
+      - restore_cache: *restore_cache
+      - run:
+          name: Build Docker image for CentOS 6
+          command: ./.circleci/build-docker.sh 6
+      - run:
+          name: Build RPM for CentOS 6
+          command: ./.circleci/run-docker.sh 6
+      - save_cache: *save_cache
+      - persist_to_workspace: *persist_to_workspace
+      - store_artifacts: *store_artifacts
+
 
   deploy:
     docker: *docker
@@ -59,10 +72,12 @@ workflows:
   version: 2
   commit:
     jobs:
-      - build
+      - centos7
+      - centos6
       - deploy:
           requires:
-            - build
+            - centos7
+            - centos6
           filters:
             branches:
               only:
