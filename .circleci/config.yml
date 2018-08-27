@@ -21,16 +21,16 @@ jobs:
             - cache-{{ .Environment.COMMON_CACHE_KEY }}
       - run:
           name: Build Docker image for CentOS 6
-          command: ./script/build-docker.sh 6
+          command: ./.circleci/build-docker.sh 6
       - run:
           name: Build Docker image for CentOS 7
-          command: ./script/build-docker.sh 7
+          command: ./.circleci/build-docker.sh 7
       - run:
           name: Build RPM for CentOS 6
-          command: ./script/run-docker.sh 6
+          command: ./.circleci/run-docker.sh 6
       - run:
           name: Build RPM for CentOS 7
-          command: ./script/run-docker.sh 7
+          command: ./.circleci/run-docker.sh 7
       - save_cache:
           name: Save cache
           key: cache-{{ .Environment.COMMON_CACHE_KEY }}
@@ -53,7 +53,7 @@ jobs:
           at: /root/project
       - deploy:
           name: Deploy to GitHub Release
-          command: ./script/github-release.sh
+          command: ./.circleci/github-release.sh
 
 workflows:
   version: 2
