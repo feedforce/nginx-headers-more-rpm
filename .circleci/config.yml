@@ -15,6 +15,10 @@ references:
           # Required by CircleCI 2.0: https://circleci.com/docs/2.0/custom-images/#required-tools-for-primary-containers
           apk add --no-progress git openssh-client tar gzip ca-certificates
 
+          # Required by .circleci/github-release.sh
+          apk add --no-progress curl go musl-dev
+          echo 'export PATH=$PATH:$HOME/go/bin' >> $BASH_ENV
+
   - &restore_cache
       restore_cache:
         name: Restore cache
