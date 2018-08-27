@@ -1,0 +1,69 @@
+version: 2
+
+jobs:
+  build:
+    docker: &docker
+      - image: docker:stable
+    working_directory: /root/project
+    steps:
+      - run: &setup_requirements
+          name: Setup requirements
+          command: |
+            apk update
+
+            # Required by CircleCI 2.0: https://circleci.com/docs/2.0/custom-images/#required-tools-for-primary-containers
+            apk add --no-progress git openssh-client tar gzip ca-certificates
+      - checkout
+      - setup_remote_docker
+      - restore_cache:
+          name: Restore cache
+          keys:
+            - cache-{{ .Environment.COMMON_CACHE_KEY }}
+      - run:
+          name: Build Docker image for CentOS 6
+          command: ./script/build-docker.sh 6
+      - run:
+          name: Build Docker image for CentOS 7
+          command: ./script/build-docker.sh 7
+      - run:
+          name: Build RPM for CentOS 6
+          command: ./script/run-docker.sh 6
+      - run:
+          name: Build RPM for CentOS 7
+          command: ./script/run-docker.sh 7
+      - save_cache:
+          name: Save cache
+          key: cache-{{ .Environment.COMMON_CACHE_KEY }}
+          paths:
+            - $HOME/cache
+      - persist_to_workspace:
+          root: /root/project
+          paths:
+            - dist
+      - store_artifacts:
+          path: /root/project/dist
+
+  deploy:
+    docker: *docker
+    working_directory: /root/project
+    steps:
+      - checkout
+      - run: *setup_requirements
+      - attach_workspace:
+          at: /root/project
+      - deploy:
+          name: Deploy to GitHub Release
+          command: ./script/github-release.sh
+
+workflows:
+  version: 2
+  commit:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - master

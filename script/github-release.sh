@@ -2,7 +2,7 @@
 
 set -xe
 
-PATCH_PATH=$HOME/$CIRCLE_PROJECT_REPONAME/nginx.spec.centos7.patch
+PATCH_PATH=$CIRCLE_WORKING_DIRECTORY/nginx.spec.centos7.patch
 
 NGINX_VERSION=$(grep '^ Version:' $PATCH_PATH | cut -d ' ' -f 3)
 
@@ -20,7 +20,7 @@ if ! need_to_release; then
 fi
 
 go get github.com/aktau/github-release
-cp $CIRCLE_ARTIFACTS/*.rpm .
+cp $CIRCLE_WORKING_DIRECTORY/dist/*.rpm .
 
 #
 # Create a release page
