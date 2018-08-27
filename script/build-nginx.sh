@@ -24,4 +24,5 @@ cd $HOME/rpmbuild/SPECS
 patch -p0 < $PATCH_PATH
 rpmbuild -ba nginx.spec
 
-cp $HOME/rpmbuild/RPMS/x86_64/* /shared
+mkdir $HOME/dist
+cp $HOME/rpmbuild/RPMS/x86_64/* $HOME/dist
